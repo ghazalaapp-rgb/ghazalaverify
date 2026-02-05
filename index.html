@@ -3,99 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تم التحقق - غزالة</title>
+    <title>تفعيل حساب غزالة</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            background: #ffffff; 
-            font-family: 'Tajawal', sans-serif; 
-        }
-        .container { 
-            text-align: center; 
-            max-width: 400px; 
-            width: 85%; 
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
-        .logo { 
-            width: 150px; 
-            margin-bottom: 30px; 
-        }
-        .success-wrapper {
-            margin-bottom: 20px;
-        }
-        .success-icon { 
-            color: #28a745; 
-            font-size: 60px; 
-            display: block;
-            margin-bottom: 10px;
-        }
-        h1 { 
-            font-size: 26px; 
-            color: #ff6b00; 
-            margin-bottom: 15px; 
-        }
-        p { 
-            font-size: 18px; 
-            color: #555; 
-            line-height: 1.7; 
-            margin: 0 auto;
-        }
-        .divider {
-            width: 50px;
-            height: 3px;
-            background: #ff6b00;
-            margin: 25px auto;
-            border-radius: 2px;
-        }
-        .info-text {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 40px;
-        }
-        /* قسم الحقوق الجديد */
-        .footer-rights {
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            font-size: 13px;
-            color: #777;
-            letter-spacing: 0.5px;
-        }
-        .footer-rights b {
-            color: #ff6b00;
-        }
+        body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; font-family: 'Tajawal', sans-serif; color: #333; }
+        .container { text-align: center; max-width: 400px; width: 85%; }
+        .logo { width: 140px; margin-bottom: 20px; }
+        #statusIcon { font-size: 60px; display: block; margin-bottom: 10px; }
+        h1 { font-size: 24px; color: #ff6b00; margin-bottom: 10px; }
+        p { font-size: 16px; color: #666; line-height: 1.6; }
+        .footer { margin-top: 50px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #999; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-       <img src="https://ghazalaapp-rgb.github.io/ghazalaverify/logo.png" alt="غزالة" class="logo">
-
-        
-        <div class="success-wrapper">
-            <span class="success-icon">✓</span>
-            <h1>تم تفعيل حسابك بنجاح</h1>
-        </div>
-
-        <p>أهلاً بك في عائلة غزالة.<br>حسابك الآن نشط وجاهز للاستخدام.</p>
-        
-        <div class="divider"></div>
-
-        <p class="info-text">يمكنك الآن إغلاق هذه الصفحة والعودة إلى التطبيق للمتابعة.</p>
-
-        <div class="footer-rights">
-            جميع الحقوق محفوظة © 2026 لـ <b>تطبيق غزالة - Ghazala App</b>
-        </div>
+<div class="container">
+    <img src="https://raw.githubusercontent.com/ghazalaapp-rgb/ghazalaverify/main/logo.png" alt="غزالة" class="logo">
+    <span id="statusIcon">⏳</span>
+    <h1 id="statusText">جاري التفعيل...</h1>
+    <p id="statusMsg">يرجى الانتظار لحظات لمعالجة طلبك.</p>
+    
+    <div class="footer">
+        جميع الحقوق محفوظة © 2026 لـ <b style="color: #ff6b00;">تطبيق غزالة - Ghazala App</b>
     </div>
+</div>
 
+<script>
+    // بيانات مشروعك الحقيقية من الصورة 65475
+    const firebaseConfig = {
+        apiKey: "AIzaSyB..." /* ملاحظة: الـ API Key موجود في ملف google-services.json عندك، يرجى التأكد منه */,
+        authDomain: "test-ecf37.firebaseapp.com",
+        projectId: "test-ecf37",
+        storageBucket: "test-ecf37.appspot.com",
+        messagingSenderId: "673984505526",
+        appId: "1:673984505526:android:08653523704ac7d8efe817"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const actionCode = urlParams.get('oobCode');
+
+    if (mode === 'verifyEmail' && actionCode) {
+        firebase.auth().applyActionCode(actionCode)
+            .then(() => {
+                document.getElementById('statusIcon').innerText = "✓";
+                document.getElementById('statusIcon').style.color = "#28a745";
+                document.getElementById('statusText').innerText = "تم التفعيل بنجاح!";
+                document.getElementById('statusMsg').innerText = "شكراً لك، يمكنك الآن العودة للتطبيق واستخدامه.";
+            })
+            .catch((error) => {
+                document.getElementById('statusIcon').innerText = "✕";
+                document.getElementById('statusIcon').style.color = "#dc3545";
+                document.getElementById('statusText').innerText = "انتهت صلاحية الرابط";
+                document.getElementById('statusMsg').innerText = "عذراً، هذا الرابط لم يعد صالحاً أو تم استخدامه من قبل.";
+            });
+    } else {
+        document.getElementById('statusText').innerText = "رابط غير مكتمل";
+        document.getElementById('statusMsg').innerText = "يرجى استخدام الرابط المرسل إلى بريدك الإلكتروني.";
+    }
+</script>
 </body>
 </html>
